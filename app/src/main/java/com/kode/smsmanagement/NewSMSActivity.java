@@ -1,6 +1,10 @@
 package com.kode.smsmanagement;
 
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -91,6 +95,7 @@ public class NewSMSActivity extends AppCompatActivity {
 
     private void updateConversation(){
         String number = edt_number.getText().toString();
+
         List<Message> messages = Message.find(Message.class, "sender = ? or receiver = ?", new String[]{number, number});
 
         MessageAdapter adapter = new MessageAdapter(this, R.layout.left_chat_adapter, messages);
@@ -99,11 +104,15 @@ public class NewSMSActivity extends AppCompatActivity {
 
         listView.setAdapter(adapter);
 
+        listView.setSelection(adapter.getCount() - 1);
+
     }
 
     void sendSms(){
         String number = edt_number.getText().toString();
         String msg = edt_msg.getText().toString();
+
+        String SMS_SENT = "SMS_SENT";
 
         edt_msg.setText("");
 
@@ -114,18 +123,32 @@ public class NewSMSActivity extends AppCompatActivity {
                 edt_number.setText(number);
             }
 
-            SmsManager smsManager = SmsManager.getDefault();
-            smsManager.sendTextMessage(number, null, msg, null, null);
-
-            Message message = new Message();
+            final Message message = new Message();
             message.setDatecreated(Session.getDateAndTime());
             message.setReceiver(number);
             message.setSender("Me");
             message.setMessage(msg);
             message.setOperator(Session.getOperatorName(this));
-            message.save();
+            message.setStatus(-101);
+            long id_msg = message.save();
 
             updateConversation();
+
+            PendingIntent sentPendingIntent = PendingIntent.getBroadcast(this, (int)id_msg, new Intent(SMS_SENT), 0);
+
+            registerReceiver(new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    message.setStatus(getResultCode());
+                    message.save();
+                    updateConversation();
+                }
+            }, new IntentFilter(SMS_SENT));
+
+            SmsManager smsManager = SmsManager.getDefault();
+            smsManager.sendTextMessage(number, null, msg, sentPendingIntent, null);
+
+
         }
     }
 

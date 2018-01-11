@@ -1,5 +1,6 @@
 package com.kode.smsmanagement;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -46,10 +47,20 @@ public class MessageAdapter extends ArrayAdapter<Message> {
 
         ViewHolder holder;
         int layoutResource = 0;
+        String status = "";
         Message message = messages.get(position);
 
         if (message.getSender().equals("Me")){
             layoutResource = R.layout.right_chat_adapter;
+
+            if(message.getStatus() == -101)
+                status = "* Sending...";
+            else if(message.getStatus() == Activity.RESULT_OK)
+                status = "* Sent";
+            else if(message.getStatus() == 0)
+                status = "* No response";
+            else
+                status = "* Error";
 
         }else{
             layoutResource = R.layout.left_chat_adapter;
@@ -57,7 +68,7 @@ public class MessageAdapter extends ArrayAdapter<Message> {
 
 
 
-        if (convertView == null){
+        //if (convertView == null){
             holder = new ViewHolder();
             convertView = inflater.inflate(layoutResource, parent, false);
 
@@ -65,12 +76,13 @@ public class MessageAdapter extends ArrayAdapter<Message> {
             holder.tv_date = (TextView) convertView.findViewById(R.id.adapter_conv_tv_date);
 
             convertView.setTag(holder);
-        }else {
+        /*}else {
             holder = (ViewHolder) convertView.getTag();
-        }
+        }*/
 
         holder.tv_msg.setText(message.getMessage());
-        holder.tv_date.setText(String.format(Locale.US, "%s * %s", message.getDatecreated(), message.getOperator()));
+
+        holder.tv_date.setText(String.format(Locale.US, "%s * %s %s", message.getDatecreated(), message.getOperator(), status));
 
 
         return convertView;
