@@ -1,0 +1,1 @@
+alter table message add conversation TEXT;

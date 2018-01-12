@@ -3,6 +3,7 @@ package com.kode.smsmanagement;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,11 +23,15 @@ public class ConversationAdapter extends ArrayAdapter<Message> {
 
     private Context context;
     private List<Message> messages;
-    LayoutInflater inflater ;
+    LayoutInflater inflater;
 
-    private class ViewHolder{
+    private SparseBooleanArray mSelectedItemsIds;
+
+    private class ViewHolder {
         TextView tv_numer, tv_msg, tv_date;
-        public ViewHolder(){}
+
+        public ViewHolder() {
+        }
     }
 
     public ConversationAdapter(@NonNull Context context, int resource, @NonNull List<Message> objects) {
@@ -34,6 +39,8 @@ public class ConversationAdapter extends ArrayAdapter<Message> {
 
         this.context = context;
         messages = objects;
+
+        mSelectedItemsIds = new SparseBooleanArray();
 
         inflater = LayoutInflater.from(context);
     }
@@ -44,7 +51,7 @@ public class ConversationAdapter extends ArrayAdapter<Message> {
         //super.getView(position, convertView, parent);
 
         ViewHolder holder;
-        if (convertView == null){
+        if (convertView == null) {
             holder = new ViewHolder();
             convertView = inflater.inflate(R.layout.adapter_conversation, parent, false);
 
@@ -53,7 +60,7 @@ public class ConversationAdapter extends ArrayAdapter<Message> {
             holder.tv_date = (TextView) convertView.findViewById(R.id.adapter_conv_tv_date);
 
             convertView.setTag(holder);
-        }else {
+        } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
@@ -61,10 +68,10 @@ public class ConversationAdapter extends ArrayAdapter<Message> {
 
         String pre = "You : ";
 
-        if (message.getSender().equals("Me")){
+        if (message.getSender().equals("Me")) {
             holder.tv_numer.setText(message.getReceiver());
 
-        }else{
+        } else {
             pre = "";
             holder.tv_numer.setText(message.getSender());
         }
@@ -76,5 +83,40 @@ public class ConversationAdapter extends ArrayAdapter<Message> {
 
 
         return convertView;
+    }
+
+    @Override
+    public void remove(Message object) {
+        messages.remove(object);
+        notifyDataSetChanged();
+    }
+
+    public List<Message> getWorldPopulation() {
+        return messages;
+    }
+
+    public void toggleSelection(int position) {
+        selectView(position, !mSelectedItemsIds.get(position));
+    }
+
+    public void removeSelection() {
+        mSelectedItemsIds = new SparseBooleanArray();
+        notifyDataSetChanged();
+    }
+
+    public void selectView(int position, boolean value) {
+        if (value)
+            mSelectedItemsIds.put(position, value);
+        else
+            mSelectedItemsIds.delete(position);
+        notifyDataSetChanged();
+    }
+
+    public int getSelectedCount() {
+        return mSelectedItemsIds.size();
+    }
+
+    public SparseBooleanArray getSelectedIds() {
+        return mSelectedItemsIds;
     }
 }

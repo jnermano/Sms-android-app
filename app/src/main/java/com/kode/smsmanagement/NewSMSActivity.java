@@ -130,6 +130,7 @@ public class NewSMSActivity extends AppCompatActivity {
             message.setMessage(msg);
             message.setOperator(Session.getOperatorName(this));
             message.setStatus(-101);
+            message.setConversation(number);
             long id_msg = message.save();
 
             updateConversation();
@@ -152,4 +153,9 @@ public class NewSMSActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+    }
 }

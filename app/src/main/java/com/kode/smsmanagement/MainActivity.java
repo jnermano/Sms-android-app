@@ -6,9 +6,12 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.SparseBooleanArray;
+import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
@@ -22,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private Handler handler;
 
     private ListView listView;
+    private ConversationAdapter conversationAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         listView = (ListView) findViewById(R.id.listview);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -50,6 +55,65 @@ public class MainActivity extends AppCompatActivity {
 
                 intent.putExtra("number", number);
                 startActivityForResult(intent, NEW_SMS);
+            }
+        });
+
+        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+            @Override
+            public void onItemCheckedStateChanged(ActionMode actionMode, int i, long l, boolean b) {
+
+                final int checkedCount = listView.getCheckedItemCount();
+                actionMode.setTitle(checkedCount + " Selected");
+                conversationAdapter.toggleSelection(i);
+            }
+
+            @Override
+            public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+                actionMode.getMenuInflater().inflate(R.menu.main_delete_menu, menu);
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.delete:
+                        SparseBooleanArray selected = conversationAdapter.getSelectedIds();
+
+
+                        for (int i = (selected.size() - 1); i >= 0; i--) {
+                            if (selected.valueAt(i)) {
+                                try {
+                                    Message selecteditem = conversationAdapter.getItem(selected.keyAt(i));
+                                    conversationAdapter.remove(selecteditem);
+                                    String interloc = "";
+                                    if (selecteditem.getSender().equals("Me"))
+                                        interloc = selecteditem.getReceiver();
+                                    else
+                                        interloc = selecteditem.getSender();
+
+                                    Message.deleteAll(Message.class, "conversation = ?", interloc);
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                        actionMode.finish();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode actionMode) {
+
             }
         });
 
@@ -82,12 +146,12 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void updateMessageList(){
-        List<Message> messages = Message.findWithQuery(Message.class, "SELECT * FROM message WHERE id IN (SELECT MAX(id) FROM message GROUP BY sender, receiver)");
+        List<Message> messages = Message.findWithQuery(Message.class, "SELECT * FROM message WHERE id IN (SELECT MAX(id) FROM message GROUP BY conversation)");
 
-        ConversationAdapter adapter = new ConversationAdapter(this, R.layout.adapter_conversation, messages);
+        conversationAdapter = new ConversationAdapter(this, R.layout.adapter_conversation, messages);
 
         //ArrayAdapter<Message> adapter = new ArrayAdapter<Message>(this, android.R.layout.simple_list_item_1, messages);
-        listView.setAdapter(adapter);
+        listView.setAdapter(conversationAdapter);
     }
 
     @Override

@@ -1,6 +1,7 @@
 <resources>
 
     <string name="msg_list">Messages</string>
+    <string name="delete">Delete</string>
 
     <string name="app_name">Sms Management</string>
     <string name="action_settings">Settings</string>

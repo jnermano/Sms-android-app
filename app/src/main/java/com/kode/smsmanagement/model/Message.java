@@ -17,6 +17,7 @@ public class Message extends SugarRecord {
     private String operator;
     private String datecreated;
     private int status;
+    private String conversation;
 
     public String getMessage() {
         return message;
@@ -64,6 +65,14 @@ public class Message extends SugarRecord {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public String getConversation() {
+        return conversation;
+    }
+
+    public void setConversation(String conversation) {
+        this.conversation = conversation;
     }
 
     @Override

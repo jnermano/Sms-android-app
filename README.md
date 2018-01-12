@@ -2,14 +2,18 @@
 
 Send and receive SMS on Tablet like LG G Pad 7.0 LTE
 
-# Changes
+# Features
 
-* Sent notifications
-* 9.png backgrounds for messages in conversatioins
+* send and receive sms
+* delete conversation 
 
 # Perspectives
 
-* delete and multi-delete messages/conversations
 * Send sms to multiple number
 * Send multipart text messages
 * delivered notifications
+* link with contact
+
+# Third party libraries
+
+* Sugar ORM
