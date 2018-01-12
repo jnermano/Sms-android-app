@@ -48,6 +48,7 @@ public class IncomingSms extends BroadcastReceiver {
                     m.setMessage(message);
                     m.setOperator(Session.getOperatorName(context));
                     m.setConversation(senderNum);
+                    m.setViewed(0);
                     m.save();
 
                     if (Session.getHandler() != null){

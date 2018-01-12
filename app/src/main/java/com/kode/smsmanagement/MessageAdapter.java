@@ -53,14 +53,20 @@ public class MessageAdapter extends ArrayAdapter<Message> {
         if (message.getSender().equals("Me")){
             layoutResource = R.layout.right_chat_adapter;
 
-            if(message.getStatus() == -101)
-                status = "* Sending...";
-            else if(message.getStatus() == Activity.RESULT_OK)
-                status = "* Sent";
-            else if(message.getStatus() == 0)
-                status = "* No response";
-            else
-                status = "* Error";
+            if (message.getDelivered() == 1){
+                status = "* delivered";
+            }else{
+
+                if(message.getStatus() == -101)
+                    status = "* Sending...";
+                else if(message.getStatus() == Activity.RESULT_OK)
+                    status = "* Sent";
+                else if(message.getStatus() == 0)
+                    status = "* No response";
+                else
+                    status = "* Error";
+
+            }
 
         }else{
             layoutResource = R.layout.left_chat_adapter;

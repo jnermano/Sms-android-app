@@ -35,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
         listView = (ListView) findViewById(R.id.listview);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -146,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void updateMessageList(){
-        List<Message> messages = Message.findWithQuery(Message.class, "SELECT * FROM message WHERE id IN (SELECT MAX(id) FROM message GROUP BY conversation)");
+        List<Message> messages = Message.findWithQuery(Message.class, "SELECT * FROM message WHERE id IN (SELECT MAX(id) FROM message GROUP BY conversation) order by id desc");
 
         conversationAdapter = new ConversationAdapter(this, R.layout.adapter_conversation, messages);
 

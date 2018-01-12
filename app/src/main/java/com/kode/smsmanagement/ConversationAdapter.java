@@ -1,6 +1,7 @@
 package com.kode.smsmanagement;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.SparseBooleanArray;
@@ -74,6 +75,12 @@ public class ConversationAdapter extends ArrayAdapter<Message> {
         } else {
             pre = "";
             holder.tv_numer.setText(message.getSender());
+
+            if (message.getViewed() == 0){
+                holder.tv_numer.setTypeface(Typeface.DEFAULT_BOLD);
+                holder.tv_msg.setTypeface(Typeface.DEFAULT_BOLD);
+                holder.tv_date.setTypeface(Typeface.DEFAULT_BOLD);
+            }
         }
 
         String msg = pre + message.getMessage();

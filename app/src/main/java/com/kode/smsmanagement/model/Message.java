@@ -18,6 +18,8 @@ public class Message extends SugarRecord {
     private String datecreated;
     private int status;
     private String conversation;
+    private int viewed;
+    private int delivered;
 
     public String getMessage() {
         return message;
@@ -73,6 +75,22 @@ public class Message extends SugarRecord {
 
     public void setConversation(String conversation) {
         this.conversation = conversation;
+    }
+
+    public int getViewed() {
+        return viewed;
+    }
+
+    public void setViewed(int viewed) {
+        this.viewed = viewed;
+    }
+
+    public int getDelivered() {
+        return delivered;
+    }
+
+    public void setDelivered(int delivered) {
+        this.delivered = delivered;
     }
 
     @Override
