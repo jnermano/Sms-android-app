@@ -18,3 +18,6 @@ Send and receive SMS on Tablet like LG G Pad 7.0 LTE
 
 * Sugar ORM
 * PermissionsDispatcher
+
+# Contributing
+[Thanks for your interest in contributing! There are many ways to contribute to this project. Get started here ](CONTRIBUTING.md)
